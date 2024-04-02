@@ -1,4 +1,4 @@
-# T High-Availability Lab on Ubuntu Project.
+# The High-Availability Lab on Ubuntu Project.
 
 This project was started by Bradley Hook in 2023 and first published in 2024.
 
