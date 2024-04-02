@@ -1,0 +1,126 @@
+#cloud-config
+# This file allows cloud-init to autoconfigure fw0 for a high-availability router/firewall
+autoinstall:
+  version: 1
+  refresh-installer:
+    update: no
+  network:
+    version: 2
+    ethernets:
+      # Fastboot marks all ethernet and macvlan interfaces optional and disables DHCP
+      # WARNING: This will break applications that need functional interfaces at boot!
+      fastboot:
+        match: {name: "en*|mv*"}
+        optional: true
+        dhcp4: no
+        dhcp6: no
+      # Create pseudonyms for wan, lan, and direct connection interfaces
+      wan0:
+        match: {name: "enp1s0"}
+        set-name: wan0
+        addresses:
+          - 192.0.2.2/29
+        routes:
+        nameservers:
+          addresses:
+            - 198.51.100.4
+            - 198.51.100.5
+        routes:
+          - to: 0.0.0.0/0
+            via: 192.0.2.6
+            metric: 1000
+        routing-policy:
+          - from: 192.0.2.2/32
+            table: 254
+            priority: 254
+          - to: 192.0.2.2/32
+            table: 254
+            priority: 254
+      lan0:
+        match: {name: "enp2s0"}
+        set-name: lan0
+        addresses:
+          - 198.51.100.2/25
+        routing-policy:
+          - from: 198.51.100.2/32
+            table: 254
+            priority: 254
+          - to: 198.51.100.2/32
+            table: 254
+            priority: 254
+      direct0:
+        match: {name: "enp3s0"}
+        set-name: direct0
+        addresses:
+          - 203.0.113.2/29
+        routing-policy:
+          - from: 203.0.113.2/32
+            table: 254
+            priority: 254
+          - to: 203.0.113.2/32
+            table: 254
+            priority: 254
+  ssh:
+    install-server: yes
+    allow-pw: no
+  packages:
+    - net-tools
+    - chrony
+    - keepalived
+    - kea
+    - radvd
+    - postfix
+    - conntrackd
+    - ufw-
+    - iptables-
+  updates: security
+  shutdown: reboot
+  user-data:
+    hostname: site-a-fw0
+    disable_root: true
+    users:
+      - name: testuser
+        gecos: "Test User"
+        groups: [adm, sudo]
+        # This is a hash for "YourPassword" and is NOT secure! For demo purposes only!
+        passwd: $6$rounds=500000$3WevQYwUtW00Vrx5$b2eKkzb9ZRlNjjgMZJZ7ifJ./r.bT.Myt87zCSlAQOftV.sZ3xz3kD452wrv3s41bq4e3FvZ9tIPUyxIE9RFk.
+        lock_passwd: false
+        shell: /bin/bash
+        # This requires a real Launchpad user, so we comment this and use a locally generated SSH key for the demo
+        #ssh_import_id:
+        #  - lp:launchpad-testuser
+        ssh_authorized_keys:
+         - LAB_PLACEHOLDER ../id_rsa.pub
+    runcmd:
+      - if [ ! -f /etc/conntrackd/primary-backup.sh ]; then cp /usr/share/doc/conntrackd/examples/sync/primary-backup.sh /etc/conntrackd/; fi
+      - if [ -f /etc/nftables.conf ]; then systemctl enable nftables.service; systemctl start nftables.service; fi
+      - if [ -f /etc/sysctl.d/50-custom-overrides.conf ]; then sysctl --system; fi
+      - networkctl delete install0
+    write_files:
+      - path: /etc/keepalived/keepalived.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/keepalived/keepalived.conf
+      - path: /etc/systemd/system/kea-dhcp4-server.service.d/10-override.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/systemd/system/kea-dhcp4-server.service.d/10-override.conf
+      - path: /etc/kea/kea-ctrl-agent.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/kea/kea-ctrl-agent.conf
+      - path: /etc/kea/kea-dhcp4.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/kea/kea-dhcp4.conf
+      - path: /etc/kea/kea-dchp6.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/kea/kea-dhcp6.conf
+      - path: /etc/nftables.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/nftables.conf
+      - path: /etc/radvd.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/radvd.conf
+      - path: /etc/conntrackd/conntrackd.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/conntrackd/conntrackd.conf
+      - path: /etc/sysctl.d/50-custom-overrides.conf
+        encoding: b64
+        content: LAB_PLACEHOLDER_B64 etc/sysctl.d/50-custom-overrides.conf
