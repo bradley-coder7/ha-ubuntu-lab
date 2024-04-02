@@ -1,4 +1,4 @@
-This file is part of the High-Availability Linux project on Ubuntu.
+This file is part of the High-Availability Lab project on Ubuntu Linux.
 
 This project is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
