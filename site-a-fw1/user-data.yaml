@@ -112,7 +112,7 @@ autoinstall:
       - path: /etc/kea/kea-dhcp4.conf
         encoding: b64
         content: LAB_PLACEHOLDER_B64 etc/kea/kea-dhcp4.conf
-      - path: /etc/kea/kea-dchp6.conf
+      - path: /etc/kea/kea-dhcp6.conf
         encoding: b64
         content: LAB_PLACEHOLDER_B64 etc/kea/kea-dhcp6.conf
       - path: /etc/nftables.conf
