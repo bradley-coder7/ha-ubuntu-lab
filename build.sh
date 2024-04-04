@@ -7,6 +7,7 @@ fi
 if [ ! -f ./id_rsa ]; then
 	echo "Generating SSH keypair."
 	ssh-keygen -N "" -q -f ./id_rsa
+	chown $SUDO_USER:$SUDO_USER id_rsa*
 fi
 
 # Get a timestamp for pseudo-random filenames
