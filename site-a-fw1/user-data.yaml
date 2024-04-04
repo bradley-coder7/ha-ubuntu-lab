@@ -95,7 +95,6 @@ autoinstall:
       - if [ ! -f /etc/conntrackd/primary-backup.sh ]; then cp /usr/share/doc/conntrackd/examples/sync/primary-backup.sh /etc/conntrackd/; fi
       - if [ -f /etc/nftables.conf ]; then systemctl enable nftables.service; systemctl start nftables.service; fi
       - if [ -f /etc/sysctl.d/50-custom-overrides.conf ]; then sysctl --system; fi
-      - networkctl delete install0
     write_files:
       - path: /usr/local/etc/keepalived/scripts/notify.sh
         encoding: b64

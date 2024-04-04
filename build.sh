@@ -94,5 +94,4 @@ done
 echo "This script does not currently clean up after itself."
 echo "New <unit>/<unit>.<timestamp>.img files are created each run and will persist unless deleted by hand."
 echo "TODO: Detach the ISO and CIDATA images"
-echo "TODO: Remove installation NICs"
 echo "Build complete. You can use 'virsh console <unit>' to access the instances"
