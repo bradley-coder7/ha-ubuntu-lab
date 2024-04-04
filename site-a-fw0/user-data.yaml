@@ -20,7 +20,6 @@ autoinstall:
         set-name: wan0
         addresses:
           - 192.0.2.2/29
-        routes:
         nameservers:
           addresses:
             - 198.51.100.4
